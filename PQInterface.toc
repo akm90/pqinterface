@@ -1,10 +1,10 @@
-## Interface: 50100
+## Interface: 50200
 ## Title: |cff00aaffPQInterface|r
 ## Notes: PQRotation Interface, HUD for PQRotation by Xelper.
 ## Author: Diesal
 ## Version: 2.22
 ## SavedVariables: PQInterfaceDB
-## OptionalDeps: Ace3, DiesalDev, DiesalUI
+## OptionalDeps: Ace3, DiesalLibs, DiesalDevelopment
 ## X-Embeds: Ace3
 ## X-Category: Combat
 
@@ -28,7 +28,15 @@ Libs\DiesalStyle-1.0\DiesalStyle-1.0.lua
 Libs\DiesalGUI-1.0\DiesalGUI-1.0.xml
 Libs\DiesalMenu-1.0\DiesalMenu-1.0.xml
 
-
 Ini.lua
+Config.lua
+Commands.lua
+
+Objects\AbilityLogRow.lua
+
+Modules\PQREvents.lua
+Modules\Remote.lua
+Modules\AbilityLog.lua
+
 
 Core.lua
