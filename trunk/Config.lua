@@ -10,8 +10,7 @@ ADDON.defaults = {
 		locked = false,
 		minimap = {
 			hide = false,
-		},
-			
+		},			
 	},
 	profile = {
 		debugLevel = 1,	
@@ -22,21 +21,21 @@ ADDON.defaults = {
 			customText = true,			
 		},
 		abilityLog = {
-			show = false,
-			rows = 10,
-			mouseWheel = true,
+			show = false,			
 			tooltips = true,
-			castLogMax = 100,			
+			width			= 420,		
+			height 		= 218,						
 		},
-		rotationConfig = {
-			show = false,
+		configurator = {
+			show = true,
+			showOnConfig = true,
 			lock = false,			
 			width = 200,			
 			mouseWheel = true,
 			toolTips = true,
 			rotationToolTips = true,
 			varDebug = 1,
-			rotations = {},			
+			configs = {},			
 		},				
 	},		
 }

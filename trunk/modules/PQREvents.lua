@@ -17,24 +17,19 @@ ADDON.rotations = {
 	{},{},{},{},	-- Rotation  [1-4]
 	{},				-- Interrupt [5]
 }
-ADDON.CastLog = setmetatable({},{__index = {
-	['SetMax'] = function(self,max)
-		ADDON.db.profile.abilityLog.castLogMax = max	
-		self.max = max				
-		for i = 1, #self - max do remove(self,1) end		
-	end,
+local LOGMAX = 100
+ADDON.CastLog = setmetatable({},{__index = {	
 	['LogCast'] = function(self,data)
-		local n = #self		
-					
+		local n = #self					
 		self[n + 1] = data	
-		if n >= self.max then remove(self,1) end			
+		if n >= LOGMAX then remove(self,1) end	
+		ADDON.AbilityLog:RefreshLog()			
 	end,	
 }})
 -- ~~| Upvalues |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local rotations 			= ADDON.rotations
 local abilityLog 			= ADDON.abilityLog
 local castLog				= ADDON.CastLog
-
 -- ~~| Locals |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local activeAutoRotation, activeRotation, activeMode
 local lastPQR_abilityName, lastRotation, lastMode
@@ -164,7 +159,7 @@ end
 function ADDON:UNIT_SPELLCAST_SUCCEEDED(event, unitID, spell, rank, lineID, spellID)		
 	if unitID ~="player" then return end
 	-- print(event, unitID, spell, rank, lineID, spellID)
-	local castTime = GetTime()	
+	local cast = GetTime()	
 	
 	ADDON:Debug(2,'----- Begin check -----')	
 	for i = 1, #executedAbilities do		
@@ -173,10 +168,9 @@ function ADDON:UNIT_SPELLCAST_SUCCEEDED(event, unitID, spell, rank, lineID, spel
 			ADDON:Debug(2,'Logged:',spell)						
 			for j = 1, i do
 				if i == j  then					
-					executedAbilities[1].castTime = castTime
+					executedAbilities[1].cast = cast
 					castLog:LogCast(executedAbilities[1])
-				elseif executedAbilities[1].executeCount > 1 then -- dont log overflow 
-					
+				elseif executedAbilities[1].executeCount > 1 then -- dont log overflow					
 					castLog:LogCast(executedAbilities[1])
 				end 				
 				remove(executedAbilities, 1)				

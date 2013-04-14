@@ -27,16 +27,18 @@ ADDON.defaultIcon = select(3,GetSpellInfo(4038))
 
 -- ~~| Register CVars |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 RegisterCVar("PQREventsEnabled",'1') -- enables PQR events to fire
+RegisterCVar("PQISendChannel",'') -- used to send data to PQI
+
 -- ~~| StaticPopupDialogs |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StaticPopupDialogs["PQI_RENAMESET"] = {
 	text = "Are you sure you want to rename this set?",
 	button1 = TEXT(YES),
 	button2 = TEXT(NO),
-	OnAccept = function()
-		ADDON.rotationConfig:RenameSet(true)	
+	OnAccept = function(self)
+		ADDON.Configurator:RenameSet(self.key,self.value)	
 	end,
-	OnCancel = function (_,reason)
-      ADDON.rotationConfig:RenameSet()	
+	OnCancel = function(self) 
+		ADDON.Configurator:RenameSet(self.key)     
   	end,
 	timeout = 0,
 	hideOnEscape = 1,
@@ -65,17 +67,6 @@ function ADDON:SendMsg(p,m,c,t)
 	SendAddonMessage(p,m,c,t)
 end 
 
-function ADDON:FormatGetTime(num)
-	if num == 0 then return 0,0,0,0 end
-	local seconds,ms = modf (num)
-	
-	local d = format("%02.f", floor(num/86400))
-	local h = format("%02.f", floor(num/3600 - (d*24)))
-	local m = format("%02.f", floor(num/60 - (h*60) -(d*1440)));
-	local s = format("%02.f", floor(num - (m*60) - (h*3600) - (d*86400) ));
-	s = s + ms
-	local t = format("%s%s:%s:|r%02.3f",ADDON:GetTxtColor('00aaff'), h,m,s)
-	return t
-end
+
 
 
