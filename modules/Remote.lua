@@ -17,7 +17,7 @@ local GetSpellInfo, GetTime  = GetSpellInfo, GetTime
 -- ~~| Remote |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -- ~~| Remote StyleSheets |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-local remoteStyleSheet = {
+local styleSheet = {
 	['frame-background'] = {				
 		type			= 'texture',
 		layer			= 'BACKGROUND',
@@ -135,6 +135,27 @@ local modeColor = {
 	manual		= ORANGE,
 	auto			= GREEN,
 	interrupt 	= BLUE,	
+}
+
+local menuData = {
+	{	name = 'Ability Log',	
+		onClick = function()
+			local frame = ADDON.AbilityLog.frame 			
+			frame[frame:IsVisible() and "Hide" or "Show"](frame)
+		end,
+		check	= function()			
+			return ADDON.db.profile.abilityLog.show
+		end,
+	},
+	{	name = 'Configurator',	
+		onClick = function()
+			local frame = ADDON.Configurator.frame 			
+			frame[frame:IsVisible() and "Hide" or "Show"](frame)
+		end,
+		check	= function()			
+			return ADDON.db.profile.configurator.show
+		end,
+	},
 }
 
 local function GetTooltipAnchor(frame,yOffset)	
@@ -258,8 +279,14 @@ function ADDON:constructRemote()
 	frame:SetToplevel(true)		
 	frame:SetScript("OnMouseDown", function(this,button)
 		DiesalGUI:OnMouse(this,button)
-		GameTooltip:Hide()		
-		frame:StartMoving()				
+		GameTooltip:Hide()
+		
+		if button == 'LeftButton' then		
+			frame:StartMoving()
+		elseif button == 'RightButton' then
+			
+			DiesalMenu:Menu(menuData,this,2,-21)	
+		end					
 	end)
 	frame:SetScript("OnMouseUp", function(this)	
 		frame:StopMovingOrSizing()			
@@ -326,7 +353,7 @@ function ADDON:constructRemote()
 	end
 	-- ~~ Style ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	self.textures = {}
-	DiesalStyle:AddObjectStyleSheet(self,remoteStyleSheet)
+	DiesalStyle:AddObjectStyleSheet(self,styleSheet)
 	-- ~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~			
 	return self
 end

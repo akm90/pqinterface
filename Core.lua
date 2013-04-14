@@ -19,7 +19,18 @@ local remove 								= table.remove
 -- ~~| WoW Upvalues |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local GetSpellInfo, GetTime  			= GetSpellInfo, GetTime
 -- ~~| Locals |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- ~~ Garbage Collector ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+ADDON.garbageCollector = CreateFrame('Frame')
+ADDON.garbageCollector.time = 30
+ADDON.garbageCollector:SetScript('OnUpdate', function(this,elapsed)
+	if this.time < 0 then
+		this.time = 30 -- 30 second garbage collection
+		collectgarbage()			
+	else		
+		this.time = this.time - elapsed			
+	end	
+end)
 -- ~~| ADDON States |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 function ADDON:OnInitialize()
 	-- Database	
@@ -40,8 +51,7 @@ function ADDON:OnInitialize()
 		icon 				= ADDON.mediaPath.."LDBIcon",
 		OnClick 			= function(self,button)
 			if button == "LeftButton" then 
-			if ADDON:IsEnabled() then ADDON:Disable() else ADDON:Enable() end
-			AceConfigRegistry:NotifyChange(AddOnName)	
+				
 			else
 				InterfaceOptionsFrame_OpenToCategory(ADDON.optionsFrame)		
 			end
@@ -59,28 +69,22 @@ function ADDON:OnInitialize()
 	LibDBIcon:Register(AddOnName,self.launcher,self.db.global.minimap) 	
 	-- Slash commands
 	self:RegisterChatCommand('PQI','CommandHandler')		
-	-- Construction
-	self.CastLog:SetMax(ADDON.db.profile.abilityLog.castLogMax)	
-	
+	-- Construction	
 	self.Remote = ADDON:constructRemote()	
-	self.Remote:Update()	
 	self.AbilityLog = ADDON:constructAbilityLog()	
-	self.AbilityLog:Update()
+	self.Configurator = ADDON:constructConfigurator()	
+	-- Update
+	self:Update()	
 	
-	DT.Explore('AbilityLog',self.AbilityLog,3)	
-	self:Print("v"..ADDON.version.." Loaded.")		
+	self:Print("v"..ADDON.version.." Loaded.")	
+	-- ~~ End of Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	DT.Explore('PQInterface',self,2)			
 end
 function ADDON:OnEnable() 
-	-- self.garbageCollectionTimer = self:ScheduleRepeatingTimer('GarbageCollection', 100) 	
-	self.Remote:Show()
-
-	self:Update()	
-	self:Print("Visible.")			
+	-- self.garbageCollectionTimer = self:ScheduleRepeatingTimer('GarbageCollection', 100) 		
 end
 function ADDON:OnDisable()	
-	self.Remote:Hide()
 	
-	self:Print("Hidden.")	
 end
 -- ~~| ADDON Update |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 function ADDON:ProfileUpdate()
@@ -91,6 +95,7 @@ function ADDON:ProfileUpdate()
 	-- Update Database Pointers
 	self.Remote.db = ADDON.db.profile.remote
 	self.AbilityLog.db = ADDON.db.profile.abilityLog
+	self.Configurator.db = ADDON.db.profile.configurator	
 	-- Update	
 	self:Update()	
 end
@@ -101,5 +106,6 @@ function ADDON:Update()
 		
 	self.Remote:Update()	
 	self.AbilityLog:Update()
+	self.Configurator:Update()
 end
 
