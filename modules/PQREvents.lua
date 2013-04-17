@@ -1,6 +1,4 @@
-local AddOnName, Env = ... local ADDON = Env[1] 
--- ~~| Development |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-local DT = ADDON.development
+local AddOnName, Env = ...; local ADDON, DT = Env[1], Env[1].development
 -- ~~| Libraries |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -- ~~| Lua Upvalues |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local select, print						= select, print
@@ -47,7 +45,6 @@ manualTimer:SetScript('OnUpdate', function(this,elapsed)
 		this.count = this.count - elapsed			
 	end	
 end)
-
 -- blizzard has *fucked* some of the ids associated with spells 'CastSpellBy[ID or NAME]'. 
 -- use this function on incoming spellID's from PQR_ExecutingAbility to correct
 local function checkSpell(spell)	

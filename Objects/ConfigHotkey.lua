@@ -1,6 +1,4 @@
-local AddOnName, Env = ... local ADDON = Env[1]
--- ~~| Development |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-local DT = ADDON.development
+local AddOnName, Env = ...; local ADDON, DT = Env[1], Env[1].development
 -- ~~| Libraries |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local DiesalGUI 	= LibStub('DiesalGUI-1.0')
 local DiesalStyle = LibStub("DiesalStyle-1.0")
@@ -104,10 +102,10 @@ local methods = {
 				
 		self.name:SetText(data.name)			
 	end,	
-	['Update'] = function(self)
-		local db = self.settings.db
-		SetCVar('PQISendChannel',format('return "%s_Enable",%s',db.id,tostring(db.enable)),'setVaraiable')
-		SetCVar('PQISendChannel',format('return "%s_Value",%s',self.settings.db.id,serializeValueTable(db.value)),'setVaraiable')			
+	['Update'] = function(self,db)	
+		self.settings.db = db			
+		SetCVar('PQISendChannel',format('return "%s_Enable",%s',db.id,tostring(db.enable)),'SetVaraiable')
+		SetCVar('PQISendChannel',format('return "%s_Value",%s',db.id,serializeValueTable(db.value)),'SetVaraiable')			
 		self.enable:SetChecked(db.enable)
 		self.dropdown:SetValueTable(db.value)
 	end,
@@ -149,7 +147,7 @@ local function Constructor()
 	enable:SetCheckedTexture(check)
 	enable:SetScript('OnClick', function(this)		
 		self.settings.db.enable = this:GetChecked() and true or false
-		SetCVar('PQISendChannel',format('return "%s_Enable",%s',self.settings.db.id,tostring(self.settings.db.enable)),'setVaraiable')
+		SetCVar('PQISendChannel',format('return "%s_Enable",%s',self.settings.db.id,tostring(self.settings.db.enable)),'SetVaraiable')
 	end)	
 
 	local dropdown = DiesalGUI:Create('Dropdown') 
@@ -162,7 +160,7 @@ local function Constructor()
 	dropdown:SetList({ la="la", ra="ra", ls="ls", rs="rs", lc="lc", rc="rc" },{ "la","ra","ls","rs","lc","rc" })	
 	dropdown:SetEventListener('OnValueSelected', function(this,event,key,valuue,selectionTable)			
 		self.settings.db.value = selectionTable		
-		SetCVar('PQISendChannel',format('return "%s_Value",%s',self.settings.db.id,serializeValueTable(selectionTable)),'setVaraiable')		
+		SetCVar('PQISendChannel',format('return "%s_Value",%s',self.settings.db.id,serializeValueTable(selectionTable)),'SetVaraiable')		
 	end)
 
 	local name = self:CreateRegion("FontString", 'name', frame)
