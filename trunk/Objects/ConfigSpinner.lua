@@ -1,6 +1,4 @@
-local AddOnName, Env = ... local ADDON = Env[1]
--- ~~| Development |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-local DT = ADDON.development
+local AddOnName, Env = ...; local ADDON, DT = Env[1], Env[1].development
 -- ~~| Libraries |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local DiesalGUI 	= LibStub('DiesalGUI-1.0')
 local DiesalStyle = LibStub("DiesalStyle-1.0")
@@ -104,10 +102,10 @@ local methods = {
 		},true)			
 		self.name:SetText(data.name)			
 	end,	
-	['Update'] = function(self)
-		local db = self.settings.db
-		SetCVar('PQISendChannel',format('return "%s_Enable",%s',db.id,tostring(db.enable)),'setVaraiable')
-		SetCVar('PQISendChannel',format('return "%s_Value",%s',db.id,db.value),'setVaraiable')	
+	['Update'] = function(self,db)
+		self.settings.db = db		
+		SetCVar('PQISendChannel',format('return "%s_Enable",%s',db.id,tostring(db.enable)),'SetVaraiable')
+		SetCVar('PQISendChannel',format('return "%s_Value",%s',db.id,db.value),'SetVaraiable')	
 		self.enable:SetChecked(db.enable)
 		self.spinner:SetNumber(db.value)
 	end,
@@ -149,7 +147,7 @@ local function Constructor()
 	enable:SetCheckedTexture(check)
 	enable:SetScript('OnClick', function(this)		
 		self.settings.db.enable = this:GetChecked() and true or false
-		SetCVar('PQISendChannel',format('return "%s_Enable",%s',self.settings.db.id,tostring(self.settings.db.enable)),'setVaraiable')
+		SetCVar('PQISendChannel',format('return "%s_Enable",%s',self.settings.db.id,tostring(self.settings.db.enable)),'SetVaraiable')
 	end)	
 
 	local spinner = DiesalGUI:Create('Spinner') 
@@ -158,7 +156,7 @@ local function Constructor()
 	spinner:SetEventListener('OnValueChanged', function(this,event,userInput,number)			
 		if not userInput then return end	
 		self.settings.db.value = number
-		SetCVar('PQISendChannel',format('return "%s_Value",%s',self.settings.db.id,number),'setVaraiable')		
+		SetCVar('PQISendChannel',format('return "%s_Value",%s',self.settings.db.id,number),'SetVaraiable')		
 	end)
 
 	local name = self:CreateRegion("FontString", 'name', frame)

@@ -26,8 +26,9 @@ ADDON.myrealm 		= GetRealmName()
 ADDON.defaultIcon = select(3,GetSpellInfo(4038))
 
 -- ~~| Register CVars |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-RegisterCVar("PQREventsEnabled",'1') -- enables PQR events to fire
-RegisterCVar("PQISendChannel",'') -- used to send data to PQI
+RegisterCVar("PQREventsEnabled",1) 	-- enables PQR events to fire
+RegisterCVar("PQISendChannel",0) 	-- used to send data to PQI
+RegisterCVar("PQIVariablePrint",0)
 
 -- ~~| StaticPopupDialogs |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StaticPopupDialogs["PQI_RENAMESET"] = {
@@ -38,7 +39,7 @@ StaticPopupDialogs["PQI_RENAMESET"] = {
 		ADDON.Configurator:RenameSet(self.key,self.value)	
 	end,
 	OnCancel = function(self) 
-		ADDON.Configurator:RenameSet(self.key)     
+		ADDON.Configurator.setSelect:SetValue(self.key)		  
   	end,
 	timeout = 0,
 	hideOnEscape = 1,

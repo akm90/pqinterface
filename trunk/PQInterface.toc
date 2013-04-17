@@ -29,7 +29,7 @@ Libs\DiesalGUI-1.0\DiesalGUI-1.0.xml
 Libs\DiesalMenu-1.0\DiesalMenu-1.0.xml
 
 Ini.lua
-Config.lua
+Options.lua
 Commands.lua
 
 Objects\AbilityLogRow.lua

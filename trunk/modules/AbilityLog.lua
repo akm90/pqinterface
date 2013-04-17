@@ -1,6 +1,4 @@
-local AddOnName, Env = ... local ADDON = Env[1]
--- ~~| Development |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-local DT = ADDON.development
+local AddOnName, Env = ...; local ADDON, DT = Env[1], Env[1].development
 -- ~~| Libraries |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local AceConfigRegistry	= LibStub("AceConfigRegistry-3.0")
 local DiesalStyle 		= LibStub("DiesalStyle-1.0")
@@ -334,13 +332,9 @@ function ADDON:constructAbilityLog()
 		self.db.left 	= left
 		self.db.top 	= top					
 	end)
-	window:SetEventListener('OnHide', function(this,event)
-		self.db.show = false
-		AceConfigRegistry:NotifyChange(AddOnName)					
+	window:SetEventListener('OnHide', function(this,event)							
 	end)
-	window:SetEventListener('OnShow', function(this,event)
-		self.db.show = true
-		AceConfigRegistry:NotifyChange(AddOnName)	
+	window:SetEventListener('OnShow', function(this,event)		
 		self:RefreshLog()			
 	end)	
 

@@ -1,6 +1,4 @@
-local AddOnName, Env = ... local ADDON = Env[1] 
--- ~~| Development |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-local DT = ADDON.development
+local AddOnName, Env = ...; local ADDON, DT = Env[1], Env[1].development
 -- ~~| Libraries |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 local LibDBIcon			= LibStub("LibDBIcon-1.0",true)
 local AceDB					= LibStub("AceDB-3.0")
@@ -26,85 +24,83 @@ ADDON.garbageCollector.time = 30
 ADDON.garbageCollector:SetScript('OnUpdate', function(this,elapsed)
 	if this.time < 0 then
 		this.time = 30 -- 30 second garbage collection
-		collectgarbage()			
-	else		
-		this.time = this.time - elapsed			
-	end	
+		collectgarbage()
+	else
+		this.time = this.time - elapsed
+	end
 end)
+
 -- ~~| ADDON States |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 function ADDON:OnInitialize()
-	-- Database	
+	-- Database
 	self.db = AceDB:New("PQInterfaceDB", self.defaults, true);
 	self.db.RegisterCallback(self, "OnProfileChanged", "ProfileUpdate")
 	self.db.RegisterCallback(self, "OnProfileCopied", "ProfileUpdate")
-	self.db.RegisterCallback(self, "OnProfileReset", "ProfileUpdate")	
+	self.db.RegisterCallback(self, "OnProfileReset", "ProfileUpdate")
 	-- Options
 	self.options.args.profile = AceDBOptions:GetOptionsTable(self.db)
 	self.options.args.profile.order = -10
 	AceConfigRegistry:RegisterOptionsTable(AddOnName, ADDON.options)
-	self.optionsFrame = AceConfigDialog:AddToBlizOptions(AddOnName, nil, nil, "general")	
-	AceConfigDialog:AddToBlizOptions(AddOnName, "Profiles", AddOnName, "profile")
+	AceConfigDialog:AddToBlizOptions(AddOnName, nil, nil, "settings")
+	AceConfigDialog:AddToBlizOptions(AddOnName, "Profiles", AddOnName, "profile")	
 	-- DataBroker Launcher Plugin
 	self.launcher = LibDataBroker:NewDataObject(AddOnName,{
 		type 				= "launcher",
 		label 			= AddOnName,
 		icon 				= ADDON.mediaPath.."LDBIcon",
-		OnClick 			= function(self,button)
-			if button == "LeftButton" then 
-				
-			else
-				InterfaceOptionsFrame_OpenToCategory(ADDON.optionsFrame)		
-			end
-		end,	
-		OnTooltipShow 	= function(tooltip)
+		OnClick 			= function(this,button)			
+			ADDON:OpenOptions()				
+		end,
+		OnTooltipShow = function(tooltip)
 			tooltip:AddLine(AddOnName, 0, .66, 1)
-			tooltip:AddLine(" ")			
-			tooltip:AddDoubleLine("Left Click:","Toggle Addon", 0, .66, 1, 1, .83, 0)
-			tooltip:AddDoubleLine("Right Click:","Open Config", 0, .66, 1, 1, .83, 0)
-
-		end,      
+			tooltip:AddLine(" ")
+			tooltip:AddDoubleLine("Click:","Open Config", 0, .66, 1, 1, .83, 0)
+		end,
 	})
 	RegisterAddonMessagePrefix('Diesal')
 	-- Minimap button
-	LibDBIcon:Register(AddOnName,self.launcher,self.db.global.minimap) 	
+	LibDBIcon:Register(AddOnName,self.launcher,self.db.global.minimap)
 	-- Slash commands
-	self:RegisterChatCommand('PQI','CommandHandler')		
-	-- Construction	
-	self.Remote = ADDON:constructRemote()	
-	self.AbilityLog = ADDON:constructAbilityLog()	
-	self.Configurator = ADDON:constructConfigurator()	
+	self:RegisterChatCommand('PQI','CommandHandler')
+	-- Construction
+	self.Remote = ADDON:constructRemote()
+	self.AbilityLog = ADDON:constructAbilityLog()
+	self.Configurator = ADDON:constructConfigurator()
 	-- Update
-	self:Update()	
-	
-	self:Print("v"..ADDON.version.." Loaded.")	
+	self:Update()
+
+	self:Print("v"..ADDON.version.." Loaded.")
 	-- ~~ End of Function ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	DT.Explore('PQInterface',self,2)			
+	DT.Explore('PQInterface',self,2)
 end
-function ADDON:OnEnable() 
-	-- self.garbageCollectionTimer = self:ScheduleRepeatingTimer('GarbageCollection', 100) 		
+function ADDON:OnEnable()
+	-- self.garbageCollectionTimer = self:ScheduleRepeatingTimer('GarbageCollection', 100)
 end
-function ADDON:OnDisable()	
-	
+function ADDON:OnDisable()
+
 end
 -- ~~| ADDON Update |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 function ADDON:ProfileUpdate()
 	self.db = AceDB:New("PQInterfaceDB", self.defaults, true);
 	self.db.RegisterCallback(self, "OnProfileChanged", "ProfileUpdate")
 	self.db.RegisterCallback(self, "OnProfileCopied", "ProfileUpdate")
-	self.db.RegisterCallback(self, "OnProfileReset", "ProfileUpdate")	
+	self.db.RegisterCallback(self, "OnProfileReset", "ProfileUpdate")
 	-- Update Database Pointers
 	self.Remote.db = ADDON.db.profile.remote
 	self.AbilityLog.db = ADDON.db.profile.abilityLog
-	self.Configurator.db = ADDON.db.profile.configurator	
-	-- Update	
-	self:Update()	
+	self.Configurator.db = ADDON.db.profile.configurator
+	-- Update
+	-- self.Remote:ProfileUpdate
+	-- self.AbilityLog
+	self.Configurator:ProfileUpdate()	
+	self:Update()
 end
 function ADDON:Update()
-	if not ADDON:IsEnabled() then return false end	
-	-- Minimap icon	
+	if not ADDON:IsEnabled() then return false end
+	-- Minimap icon
 	if self.db.global.minimap.hide then	LibDBIcon:Hide(AddOnName) else LibDBIcon:Show(AddOnName) end
-		
-	self.Remote:Update()	
+
+	self.Remote:Update()
 	self.AbilityLog:Update()
 	self.Configurator:Update()
 end
